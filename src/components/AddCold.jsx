@@ -45,8 +45,9 @@ function AddCold(props) {
   const recordRef = db.collection('records');
   const [projectList, setProjectList] = useState([]);
   const [companyList, setCompanyList] = useState([]);
-  const [loading, setLoading] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+  const [readOnly, setreadOnly] = useState(true);
 
   const { getFieldDecorator } = props.form;
   useEffect(() => {
@@ -227,11 +228,12 @@ function AddCold(props) {
                 type: 'number',
                 message: 'The input is not valid Number!',
               }, { required: true, message: 'Please input your Contact\'s Phone No. !' }],
-            })(<InputNumber style={{ width: '100%' }} />)}
+            })(<InputNumber style={{ width: '100%' }} readOnly={readOnly} onFocus={() => (setreadOnly(false))} onBlur={() => (setreadOnly(true))} />)}
           </Form.Item>
           <Form.Item
             label="Contact Email"
             placeholder="Enter your Contact\'s email"
+
           >
             {getFieldDecorator('contactEmail', {
               rules: [
