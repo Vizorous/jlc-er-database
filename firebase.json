@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "target":"erdb",
     "public": "build",
     "ignore": [
       "firebase.json",

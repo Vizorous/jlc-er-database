@@ -2,20 +2,32 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { hydrate, render } from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import App from './App';
+import rootReducer from './reducers';
 
+const store = createStore(rootReducer);
 const rootElement = document.getElementById('root');
 if (rootElement.hasChildNodes()) {
   hydrate(
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>, rootElement,
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>,
+    rootElement,
+
   );
 } else {
   render(
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>, rootElement,
+    <Provider store={store}>
+
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>,
+    rootElement,
   );
 }
 

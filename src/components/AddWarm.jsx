@@ -41,7 +41,9 @@ const outcomeList = [
   'Negative',
 ];
 function AddCold(props) {
-  const [projectList, setProjectList] = useState(['test', 'test', 'test']);
+  const dataRef = db.collection('Data');
+  const recordRef = db.collection('records');
+  const [projectList, setProjectList] = useState([]);
   const [companyList, setCompanyList] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -49,7 +51,23 @@ function AddCold(props) {
 
   const { getFieldDecorator } = props.form;
   useEffect(() => {
-    
+    const projectListDoc = dataRef.doc('projectList');
+    // console.log('tsting');
+
+    projectListDoc.get()
+      .then((doc) => {
+        const data = doc.data();
+        console.log(data.name);
+        setProjectList(data.name);
+        const companyListDoc = dataRef.doc('companyList');
+        companyListDoc.get()
+          .then((doc) => {
+            setCompanyList(doc.data().names);
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }, []);
 
 
@@ -109,33 +127,30 @@ function AddCold(props) {
                           setCompanyList(docs.data().names);
                         });
                     }
-                    message.success('Document successfully written!');
+                    message.info('Document successfully written!');
                     setLoading(false);
                   }),
 
               )
               .catch((err) => {
-                message.error('Error occured. Please refresh!');
-                console.error(err, 'inner');
+                console.error(err);
               });
           })
           .catch((err) => {
-            message.error('Error occured. Please refresh!');
-            console.error(err, 'middle');
+            console.error(err);
           });
       })
       .catch((err) => {
-        message.error('Error occured. Please refresh!');
-        console.error(err, 'outer');
+        console.error(err);
       });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     props.form.validateFieldsAndScroll(async (err, values) => {
       if (!err) {
         console.log(values);
-        setLoading(true);
 
         const result = await setData(values);
       }
