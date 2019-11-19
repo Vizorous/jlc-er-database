@@ -1,31 +1,37 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { hydrate, render } from 'react-dom';
-// import { createStore } from 'redux';
-// import { Provider } from 'react-redux';
+import { Provider } from 'react-redux';
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
 import App from './App';
-// import rootReducer from './reducers';
+import { store, rrfProps } from './firebase/reduxfirebase';
 
 const rootElement = document.getElementById('root');
 if (rootElement.hasChildNodes()) {
   hydrate(
-    // <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>, // </Provider>
+    <Provider store={store}>
+      <ReactReduxFirebaseProvider {...rrfProps}>
 
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ReactReduxFirebaseProvider>
+    </Provider>,
     rootElement,
 
   );
 } else {
   render(
-    // <Provider store={store}>
+    <Provider store={store}>
+      <ReactReduxFirebaseProvider {...rrfProps}>
 
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>, // </Provider>
-
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ReactReduxFirebaseProvider>
+    </Provider>,
     rootElement,
   );
 }

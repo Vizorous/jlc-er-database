@@ -4,13 +4,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useReducer, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Select, Input, Button, DatePicker, Form, Tooltip, Icon, Checkbox, InputNumber, AutoComplete, message,
 } from 'antd';
-import { db, firebase } from './Firebase/firebase';
 import {
   setColdData, getAsyncProjectList, setAsyncProjectList, getAsyncCompanyList,
-} from './Firebase/index';
+} from '../firebase/index';
 
 const { TextArea } = Input;
 
@@ -44,8 +44,8 @@ const outcomeList = [
   'Negative',
 ];
 function AddCold(props) {
-  const dataRef = db.collection('Data');
-  const recordRef = db.collection('records');
+  const auth = useSelector((state) => state.firebase.auth);
+
   const [projectList, setProjectList] = useState([]);
   const [companyList, setCompanyList] = useState([]);
 
@@ -106,6 +106,7 @@ function AddCold(props) {
                   message: 'Please input your E-mail!',
                 },
               ],
+              initialValue: auth.email,
             })(<Input name="email" />)}
           </Form.Item>
 

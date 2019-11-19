@@ -9,6 +9,7 @@ import SelectAiesecer from './components/SelectAiesecer';
 // import AddCold from './components/AddCold';
 import AddWarm from './components/AddWarm';
 import Home from './Views/Home';
+import { db, firebase } from './firebase/reduxfirebase';
 
 function App() {
   return (

@@ -49,7 +49,7 @@ function AddCold(props) {
 
   const { getFieldDecorator } = props.form;
   useEffect(() => {
-    
+
   }, []);
 
 
