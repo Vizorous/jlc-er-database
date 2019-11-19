@@ -8,6 +8,9 @@ import {
   Select, Input, Button, DatePicker, Form, Tooltip, Icon, Checkbox, InputNumber, AutoComplete, message,
 } from 'antd';
 import { db, firebase } from './Firebase/firebase';
+import {
+  setColdData, getAsyncProjectList, setAsyncProjectList, getAsyncCompanyList,
+} from './Firebase/index';
 
 const { TextArea } = Input;
 
@@ -51,99 +54,14 @@ function AddCold(props) {
 
   const { getFieldDecorator } = props.form;
   useEffect(() => {
-    const projectListDoc = dataRef.doc('projectList');
-    // console.log('tsting');
-
-    projectListDoc.get()
-      .then((doc) => {
-        const data = doc.data();
-        console.log(data.name);
-        setProjectList(data.name);
-        const companyListDoc = dataRef.doc('companyList');
-        companyListDoc.get()
-          .then((doc) => {
-            setCompanyList(doc.data().names);
-          });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    getAsyncProjectList().then((value) => {
+      setProjectList(value);
+    });
+    getAsyncCompanyList().then((value) => {
+      setCompanyList(value);
+    });
   }, []);
 
-
-  const setData = (obj) => {
-    const recordListDoc = dataRef.doc('RecordTable');
-    const companyListDoc = dataRef.doc('companyList');
-    return recordListDoc.get()
-      .then((doc) => {
-        const data = doc.data();
-        const recordList = data.record;
-
-        const lastRecord = recordList[recordList.length - 1].id;
-        // const last
-        const currentID = (Number.parseInt(lastRecord) + 1);
-        const recordDoc = recordRef.doc(currentID.toString());
-        // console.log('changed');
-        recordDoc.set(obj, { merge: true })
-          .then(() => {
-            const companyRef = db.collection('Companies').doc(obj.companyName);
-
-            companyRef.set({
-              companyName: obj.companyName,
-              contacts: firebase.firestore.FieldValue.arrayUnion({
-                contactName: obj.contactName,
-                contactNo: obj.contactNo,
-                contactEmail: obj.contactEmail,
-              }),
-            }, { merge: true })
-              .then(
-                recordListDoc.update({
-                  record: firebase.firestore.FieldValue.arrayUnion({
-                    id: currentID,
-                    ref: db.doc(`records/${currentID}`),
-                    companyName: obj.companyName,
-                    contactName: obj.contactName,
-                    contactNo: obj.contactNo,
-                    contactEmail: obj.contactEmail,
-                    comments: obj.comments,
-                    outcome: obj.outcome,
-                    coldCall: true,
-
-                  }),
-                })
-                  .then(() => {
-                    console.log('updated');
-                  })
-                  .finally(() => {
-                    const checkCompany = companyList.filter((value) => (value === obj.companyName));
-                    console.log(checkCompany);
-
-                    if (!Array.isArray(checkCompany) || !checkCompany.length) {
-                      console.log('testing');
-
-                      companyListDoc.update({ names: firebase.firestore.FieldValue.arrayUnion(obj.companyName) });
-                      companyListDoc.get()
-                        .then((docs) => {
-                          setCompanyList(docs.data().names);
-                        });
-                    }
-                    message.info('Document successfully written!');
-                    setLoading(false);
-                  }),
-
-              )
-              .catch((err) => {
-                console.error(err);
-              });
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -152,7 +70,7 @@ function AddCold(props) {
       if (!err) {
         console.log(values);
 
-        const result = await setData(values);
+        const result = await setColdData(values, companyList, setLoading, setCompanyList);
       }
     });
   };
