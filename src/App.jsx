@@ -14,10 +14,11 @@ function App() {
   return (
     <div className="App">
       <PageHeader backIcon={false} title="JLC ER Database" />
+
       <Switch>
 
         <Route exact path="/Warm" component={AddWarm} />
-        <Route exact path="/Home" render={() => (<Home handleHomeOnClick={this.handleHomeOnClick} />)} />
+        <Route exact path="/Home" render={() => (<Home />)} />
 
         <Route exact path="/"><Redirect to="Home" /></Route>
       </Switch>
